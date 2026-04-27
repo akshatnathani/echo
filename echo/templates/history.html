@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="history-container" class="container">
+    <h2 id="history-title">Recognition History</h2>
+    <div id="history-list" class="history-list">
+        {% if history %}
+            <table id="history-table">
+                <thead>
+                    <tr>
+                        <th id="th-timestamp">Timestamp</th>
+                        <th id="th-song">Song Name</th>
+                        <th id="th-confidence">Confidence</th>
+                        <th id="th-status">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in history %}
+                        <tr id="history-entry-{{ entry.id }}">
+                            <td id="timestamp-{{ entry.id }}">{{ entry.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td id="song-{{ entry.id }}">
+                                {% if entry.recognized %}
+                                    {{ entry.song_name }}
+                                {% else %}
+                                    Not recognized
+                                {% endif %}
+                            </td>
+                            <td id="confidence-{{ entry.id }}">
+                                {% if entry.recognized %}
+                                    {{ entry.confidence|round(2) }}%
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td id="status-{{ entry.id }}">
+                                {% if entry.recognized %}
+                                    <span class="status recognized">Recognized</span>
+                                {% else %}
+                                    <span class="status not-recognized">Not Recognized</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p id="no-history-message">No recognition history yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

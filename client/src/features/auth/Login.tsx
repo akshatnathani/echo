@@ -1,85 +1,39 @@
-// src/features/auth/Login.tsx
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authApi } from '@/lib/api';
-import { authStorage } from '@/lib/auth';
-
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: Record<string, unknown>) => void;
-          renderButton: (element: HTMLElement, config: Record<string, unknown>) => void;
-        };
-      };
-    };
-  }
-}
+import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export default function Login() {
   const navigate = useNavigate();
-  const googleBtnRef = useRef<HTMLDivElement>(null);
+  const { login } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleGoogleCallback = useCallback(async (response: { credential: string }) => {
-    setError('');
-    setLoading(true);
-    try {
-      const result = await authApi.googleAuth(response.credential);
-      authStorage.setUser(result.user);
-      authStorage.setToken(result.token);
-      navigate('/home');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google login failed');
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate]);
-
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      if (window.google && googleBtnRef.current) {
-        window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-          callback: handleGoogleCallback,
-          use_fedcm_for_prompt: false,
-        });
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: 'filled_black',
-          size: 'large',
-          width: '100%',
-          text: 'continue_with',
-          shape: 'rectangular',
-        });
-      }
-    };
-    document.head.appendChild(script);
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, [handleGoogleCallback]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Client-side validation
+    if (!formData.username.trim()) {
+      setError('Username is required');
+      return;
+    }
+    if (!formData.password) {
+      setError('Password is required');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const response = await authApi.login(formData);
-      authStorage.setUser(response.user);
-      authStorage.setToken(response.token);
-      navigate('/home');
+      await login(formData.username, formData.password);
+      navigate('/recognize');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {
@@ -88,78 +42,76 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex font-sans text-slate-100">
-      {/* Left Side - Visual */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-indigo-950/30">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-purple-900/40 to-slate-900/40" />
-        
-        {/* Animated Circle Effect */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-
-        <div className="relative z-10 flex flex-col justify-center items-center h-full p-16 text-center">
-          <div className="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/30 mb-8 transform rotate-3">
-             <span className="font-bold text-white text-3xl">E</span>
-          </div>
-          
-          <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white mb-6">
-            Welcome back to<br />the soundscape.
-          </h1>
-          <p className="text-lg text-slate-300 max-w-md">
-            Your personalized audio journey continues. Sign in to access your saved echoes and playlists.
-          </p>
+    <div className={`min-h-screen flex flex-col items-center justify-center ${isDark ? 'bg-black' : 'bg-white'} p-4`}>
+      <div className="w-full max-w-md">
+        {/* Theme Toggle */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            {isDark ? (
+              <svg className="w-5 h-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            )}
+          </button>
         </div>
-      </div>
 
-      {/* Right Side - Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-slate-950">
-        <div className="w-full max-w-[420px] space-y-8">
-          <div className="text-center lg:text-left">
-            <h2 className="text-3xl font-bold text-white tracking-tight">Sign in</h2>
-            <p className="mt-2 text-slate-400">Welcome back! Please enter your details.</p>
+        {/* Logo and Header */}
+        <div className="text-center mb-10">
+          <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 ${isDark ? 'bg-white' : 'bg-black'}`}>
+            <svg className={`w-8 h-8 ${isDark ? 'text-black' : 'text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            </svg>
           </div>
+          <h1 className={`text-4xl font-bold mb-3 ${isDark ? 'text-white' : 'text-black'}`}>SoundID</h1>
+          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Identify any song instantly</p>
+        </div>
+
+        {/* Form Card */}
+        <div className={`border rounded-2xl p-8 shadow-sm ${isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
+          <h2 className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-black'}`}>Welcome back</h2>
+          <p className={`mb-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Sign in to continue to SoundID</p>
 
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              {error}
+            <div id="flash-message" className={`mb-6 p-4 rounded-xl text-sm ${isDark ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>
+              <span className="flash-error">{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-300">Email</label>
+              <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Username</label>
               <input
-                type="email"
-                required
-                placeholder="name@example.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
+                type="text"
+                id="username"
+                placeholder="Enter your username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                className={`w-full px-4 py-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-black transition-all duration-200 ${isDark ? 'bg-gray-700 border-gray-600 text-white focus:ring-gray-500' : 'bg-gray-50 border-gray-300 text-black focus:ring-black'}`}
               />
             </div>
 
             <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <label className="text-sm font-medium text-slate-300">Password</label>
-                <a href="#" className="text-sm font-medium text-indigo-400 hover:text-indigo-300">
-                  Forgot password?
-                </a>
-              </div>
+              <label className={`text-sm font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  required
+                  id="password"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-3 bg-slate-900 border border-slate-800 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200 pr-12"
+                  className={`w-full px-4 py-3 border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-black transition-all duration-200 pr-12 ${isDark ? 'bg-gray-700 border-gray-600 text-white focus:ring-gray-500' : 'bg-gray-50 border-gray-300 text-black focus:ring-black'}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors p-1"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 p-1 transition-colors ${isDark ? 'text-gray-400 hover:text-white' : 'text-gray-400 hover:text-gray-600'}`}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -177,29 +129,17 @@ export default function Login() {
 
             <button
               type="submit"
+              id="login-submit"
               disabled={loading}
-              className="w-full py-3.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow-lg shadow-indigo-500/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 active:translate-y-0"
+              className={`w-full py-3.5 px-4 font-bold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? 'bg-white hover:bg-gray-200 text-black' : 'bg-black hover:bg-gray-800 text-white'}`}
             >
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
-            
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-800" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-slate-950 px-2 text-slate-500">Or continue with</span>
-              </div>
-            </div>
 
-            <div className="flex justify-center">
-              <div ref={googleBtnRef} className="w-full" />
-            </div>
-
-            <p className="text-center text-sm text-slate-400">
+            <p className={`text-center text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
               Don't have an account?{' '}
-              <Link to="/register" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                Sign up for free
+              <Link to="/register" id="register-link" className={`font-bold hover:underline ${isDark ? 'text-white' : 'text-black'}`}>
+                Sign up free
               </Link>
             </p>
           </form>

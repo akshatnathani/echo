@@ -1,56 +1,45 @@
 // src/app/router.tsx
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Register from '@/features/auth/Register';
-import Login from '@/features/auth/Login';
-import Home from '@/features/identify/Home';
-import Map from '@/features/map/Map';
-import AIStories from '@/features/ai/AIStories';
-import ProtectedRoute from '@/components/ProtectedRoute';
-import PublicRoute from '@/components/PublicRoute';
+import Register from '../features/auth/Register';
+import Login from '../features/auth/Login';
+import Dashboard from '../features/dashboard/Dashboard';
+import Recognize from '../features/recognize/Recognize';
+import Library from '../features/library/Library';
+import History from '../features/history/History';
+import AdminUpload from '../features/admin/AdminUpload';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/register" replace />,
+    element: <Navigate to="/login" replace />,
   },
   {
     path: '/register',
-    element: (
-      <PublicRoute>
-        <Register />
-      </PublicRoute>
-    ),
+    element: <Register />,
   },
   {
     path: '/login',
-    element: (
-      <PublicRoute>
-        <Login />
-      </PublicRoute>
-    ),
+    element: <Login />,
   },
   {
-    path: '/home',
-    element: (
-      <ProtectedRoute>
-        <Home />
-      </ProtectedRoute>
-    ),
+    path: '/dashboard',
+    element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
   },
   {
-    path: '/map',
-    element: (
-      <ProtectedRoute>
-        <Map />
-      </ProtectedRoute>
-    ),
+    path: '/recognize',
+    element: <ProtectedRoute><Recognize /></ProtectedRoute>,
   },
   {
-    path: '/ai-stories',
-    element: (
-      <ProtectedRoute>
-        <AIStories />
-      </ProtectedRoute>
-    ),
+    path: '/library',
+    element: <ProtectedRoute><Library /></ProtectedRoute>,
+  },
+  {
+    path: '/history',
+    element: <ProtectedRoute><History /></ProtectedRoute>,
+  },
+  {
+    path: '/admin/upload',
+    element: <ProtectedRoute><AdminUpload /></ProtectedRoute>,
   },
 ]);

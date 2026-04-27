@@ -1,173 +1,142 @@
 // src/lib/api.ts
-import { authStorage } from './auth';
+import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true, // For session-based auth
+});
+
+// For development with Vite proxy, use /api prefix
+const isDev = import.meta.env.DEV;
+const client = isDev ? axios.create({
+  baseURL: '/api',
+  withCredentials: true,
+  headers: {
+    'Accept': 'application/json',
+  },
+}) : api;
+
+// Add response interceptor for error handling
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.error || error.message || 'Request failed';
+    return Promise.reject(new Error(message));
+  }
+);
+
+// Types
 export interface User {
-  id: string;
-  fullName: string;
-  email: string;
+  id: number;
+  username: string;
+  is_admin: boolean;
 }
 
 export interface RegisterData {
-  fullName: string;
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface LoginData {
-  email: string;
+  username: string;
   password: string;
 }
 
-export interface AuthResponse {
-  message: string;
-  token: string;
-  user: User;
-}
-
-export interface Track {
-  name: string;
-  artist: string;
-  album?: string;
-  genre?: string;
-  bpm?: number;
-  matchPercentage?: number;
-}
-
-export interface IdentifyResponse {
-  success: boolean;
-  track: Track;
-}
-
-export interface Location {
-  latitude: number;
-  longitude: number;
-  city?: string;
-  country?: string;
-}
-
-export interface Echo {
-  id: string;
-  trackName: string;
-  artist: string;
-  genre?: string;
-  bpm?: number;
-  latitude: number;
-  longitude: number;
-  city?: string;
-  country?: string;
+export interface RecognitionHistory {
+  id: number;
+  song_name: string | null;
+  confidence: number;
+  recognized: boolean;
   timestamp: string;
-  user?: string;
 }
 
-export interface EchoesResponse {
-  success: boolean;
-  echoes: Echo[];
-  total: number;
+export interface Song {
+  id: number;
+  name: string;
+  singer_name: string | null;
+  file_path: string;
+  fingerprinted: boolean;
+  created_at: string;
 }
 
-// Helper to get auth headers
-const getAuthHeaders = () => {
-  const token = authStorage.getToken();
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  };
-};
+export interface RecognitionResult {
+  song_name: string | null;
+  confidence: number;
+  recognized: boolean;
+}
 
 // Auth API
 export const authApi = {
-  register: async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+  register: async (data: RegisterData): Promise<{ message: string }> => {
+    const formData = new FormData();
+    formData.append('username', data.username);
+    formData.append('password', data.password);
+    
+    const response = await client.post('/register', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || error.details?.[0] || 'Registration failed');
-    }
-    
-    return response.json();
+    return response.data;
   },
 
-  login: async (data: LoginData): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+  login: async (data: LoginData): Promise<void> => {
+    const formData = new FormData();
+    formData.append('username', data.username);
+    formData.append('password', data.password);
+    
+    await client.post('/login', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || error.details?.[0] || 'Login failed');
-    }
-    
-    return response.json();
   },
 
-  googleAuth: async (credential: string): Promise<AuthResponse> => {
-    const response = await fetch(`${API_BASE_URL}/auth/google`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential }),
-    });
+  logout: async (): Promise<void> => {
+    await client.get('/logout');
+  },
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Google authentication failed');
-    }
-
-    return response.json();
+  getCurrentUser: async (): Promise<User> => {
+    const response = await client.get('/user');
+    return response.data;
   },
 };
 
-// Identify API
-export const identifyApi = {
-  identify: async (audioData: string, location?: Location): Promise<IdentifyResponse> => {
-    const response = await fetch(`${API_BASE_URL}/identify`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ audioData, location }),
+// Recognition API
+export const recognitionApi = {
+  recognize: async (file: File): Promise<RecognitionResult> => {
+    const formData = new FormData();
+    formData.append('audio_file', file);
+    
+    const response = await client.post('/recognize', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-    
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || error.details?.[0] || 'Music identification failed');
-    }
-    
-    return response.json();
+    return response.data;
+  },
+
+  getHistory: async (): Promise<RecognitionHistory[]> => {
+    const response = await client.get('/history');
+    return response.data;
   },
 };
 
-// Echoes API
-export const echoesApi = {
-  getAll: async (limit = 100): Promise<EchoesResponse> => {
-    const response = await fetch(`${API_BASE_URL}/echoes?limit=${limit}`, {
-      headers: getAuthHeaders(),
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch echoes');
-    }
-    
-    return response.json();
+// Library API
+export const libraryApi = {
+  getSongs: async (): Promise<Song[]> => {
+    const response = await client.get('/library');
+    return response.data;
   },
 
-  getNearby: async (longitude: number, latitude: number, maxDistance = 5000): Promise<EchoesResponse> => {
-    const response = await fetch(
-      `${API_BASE_URL}/echoes/nearby?longitude=${longitude}&latitude=${latitude}&maxDistance=${maxDistance}`,
-      {
-        headers: getAuthHeaders(),
-      }
-    );
+  uploadSong: async (file: File, songName: string, singerName: string): Promise<{ message: string }> => {
+    const formData = new FormData();
+    formData.append('audio_file', file);
+    formData.append('song_name', songName);
+    formData.append('singer_name', singerName);
     
-    if (!response.ok) {
-      throw new Error('Failed to fetch nearby echoes');
-    }
-    
-    return response.json();
+    const response = await client.post('/admin/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
   },
 };

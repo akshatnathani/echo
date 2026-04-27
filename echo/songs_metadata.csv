@@ -1,0 +1,21 @@
+S_No,Language,Artist,Gender,Location,Local_Song_Index,Song_Name,Source,location_id,artist_id,gender_id
+1,Hindi,Kishore Kumar,Male,Northern India,1,Aise Na Mujhe Tum Dekho,https://www.youtube.com/watch?v=EU0NH3EZE6A&pp=ygUXQWlzZSBOYSBNdWpoZSBUdW0gRGVraG8%3D,12,28,1
+2,Hindi,Kishore Kumar,Male,Northern India,2,Zindagi Ek Safar Hai,https://www.youtube.com/watch?v=GjPGVVebVUc&pp=ygUUWmluZGFnaSBFayBTYWZhciBIYWk%3D,12,28,1
+3,Hindi,Kishore Kumar,Male,Northern India,3,Neele Neele Ambar,https://www.youtube.com/watch?v=eVnG_Rqfgg4&pp=ygURTmVlbGUgTmVlbGUgQW1iYXI%3D,12,28,1
+4,Hindi,Kishore Kumar,Male,Northern India,4,Manzilein Apni Jaga Hein,https://www.youtube.com/watch?v=5z5724Cc9Jg&pp=ygUYTWFuemlsZWluIEFwbmkgSmFnYSBIZWlu,12,28,1
+5,Hindi,Kishore Kumar,Male,Northern India,5,O Mere Dil Chain,https://www.youtube.com/watch?v=-Px0efU00uQ&pp=ygUQTyBNZXJlIERpbCBDaGFpbg%3D%3D,12,28,1
+6,Hindi,Sonu Nigam,Male,Northern India,1,Pyar Tera,https://www.youtube.com/watch?v=nXznAPDzDMc&pp=ygUUcHlhciB0ZXJhIHNvbnUgbmlnYW0%3D,12,57,1
+7,Hindi,Sonu Nigam,Male,Northern India,2,Apnaa Mujhe Tu Lagaa,https://www.youtube.com/watch?v=KIzCpTA2p5Y&pp=ygUUQXBuYWEgTXVqaGUgVHUgTGFnYWE%3D,12,57,1
+8,Hindi,Sonu Nigam,Male,Northern India,3,Sab Kuch Bhula Diya,https://www.youtube.com/watch?v=Q6BxJblqOzo&pp=ygUTU2FiIEt1Y2ggQmh1bGEgRGl5YQ%3D%3D,12,57,1
+9,Hindi,Sonu Nigam,Male,Northern India,4,Tu Hai,https://www.youtube.com/watch?v=xxhThAj7aSA&pp=ygURdHUgaGFpIHNvbnUgbmlnYW3SBwkJ1AoBhyohjO8%3D,12,57,1
+10,Hindi,Sonu Nigam,Male,Northern India,5,Sau Dard,https://www.youtube.com/watch?v=xo8JU-Vc1C0&pp=ygUIU2F1IERhcmQ%3D,12,57,1
+11,Hindi,Lata Mangeshkar,Female,Northern India,1,Naina Yeh Barse,https://www.youtube.com/watch?v=BaxBHVp9Kiw&pp=ygUPTmFpbmEgWWVoIEJhcnNl,12,30,0
+12,Hindi,Lata Mangeshkar,Female,Northern India,2,Mere Ghar Aayi Ek,https://www.youtube.com/watch?v=BJ60zyel94Q&pp=ygURTWVyZSBHaGFyIEFheWkgRWs%3D,12,30,0
+13,Hindi,Lata Mangeshkar,Female,Northern India,3,Humein aur jeene ki,https://www.youtube.com/watch?v=t4VvB9SmsW0&pp=ygUTSHVtZWluIGF1ciBqZWVuZSBraQ%3D%3D,12,30,0
+14,Hindi,Lata Mangeshkar,Female,Northern India,4,Wada na tod,https://www.youtube.com/watch?v=Oq6q4HPBc5Q&pp=ygULV2FkYSBuYSB0b2Q%3D,12,30,0
+15,Hindi,Lata Mangeshkar,Female,Northern India,5,Mere Khwabon Mein,https://www.youtube.com/watch?v=s1LozokQjIg&pp=ygURTWVyZSBLaHdhYm9uIE1laW7SBwkJ1AoBhyohjO8%3D,12,30,0
+16,Hindi,Alka Yagnik,Female,Northern India,1,Tune Zindagi Mein Aake,https://www.youtube.com/watch?v=a2SByvJ9HwY&pp=ygUWVHVuZSBaaW5kYWdpIE1laW4gQWFrZQ%3D%3D,12,1,0
+17,Hindi,Alka Yagnik,Female,Northern India,2,Aankh Hai Bhari Bhari,https://www.youtube.com/watch?v=OgocnLh9P1M&pp=ygUVQWFua2ggSGFpIEJoYXJpIEJoYXJp,12,1,0
+18,Hindi,Alka Yagnik,Female,Northern India,3,Too Shayar Hai Main Teri Shayari,https://www.youtube.com/watch?v=rTGSWaD-2Lg&pp=ygUgVG9vIFNoYXlhciBIYWkgTWFpbiBUZXJpIFNoYXlhcmk%3D,12,1,0
+19,Hindi,Alka Yagnik,Female,Northern India,4,Der Se Hua,https://www.youtube.com/watch?v=q2fzWzDV1sg&pp=ygUKRGVyIFNlIEh1YQ%3D%3D,12,1,0
+20,Hindi,Alka Yagnik,Female,Northern India,5,Dil Cheer Ke Dekh Tera Hi Naam Hoga,https://www.youtube.com/watch?v=_wDJTSfB4bQ&pp=ygUjRGlsIENoZWVyIEtlIERla2ggVGVyYSBIaSBOYWFtIEhvZ2E%3D,12,1,0

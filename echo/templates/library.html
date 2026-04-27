@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="library-container" class="container">
+    <h2 id="library-title">Song Library</h2>
+    <div id="song-library" class="song-list">
+        {% if songs %}
+            <ul id="song-list">
+                {% for song in songs %}
+                    <li id="song-{{ song.id }}" class="song-item">
+                        <span id="song-name-{{ song.id }}">{{ song.name }}</span>
+                        <span class="song-meta">
+                            {% if song.fingerprinted %}
+                                <span id="fingerprinted-{{ song.id }}" class="status fingerprinted">Fingerprinted</span>
+                            {% else %}
+                                <span id="fingerprinted-{{ song.id }}" class="status not-fingerprinted">Not Fingerprinted</span>
+                            {% endif %}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p id="no-songs-message">No songs in the database yet.</p>
+        {% endif %}
+    </div>
+    {% if current_user.is_admin %}
+        <div id="admin-actions">
+            <a href="{{ url_for('admin_upload') }}" id="upload-song-btn" class="btn">Upload New Song</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

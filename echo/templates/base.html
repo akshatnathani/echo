@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SoundID{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="flash-message">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <h1 id="app-title">SoundID</h1>
+            <ul id="nav-links">
+                <li><a href="{{ url_for('home') }}" id="nav-home">Home</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('recognize') }}" id="nav-recognize">Recognize</a></li>
+                    <li><a href="{{ url_for('library') }}" id="nav-library">Library</a></li>
+                    <li><a href="{{ url_for('history') }}" id="nav-history">History</a></li>
+                    {% if current_user.is_admin %}
+                        <li><a href="{{ url_for('admin_upload') }}" id="nav-admin">Admin Upload</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('logout') }}" id="nav-logout">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}" id="nav-login">Login</a></li>
+                    <li><a href="{{ url_for('register') }}" id="nav-register">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer id="footer">
+        <p>&copy; 2024 SoundID - Audio Recognition System</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

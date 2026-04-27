@@ -1,0 +1,4 @@
+email,password,expectedError
+user@example.com,WrongPass999,Invalid email or password
+nobody_123456@test.com,Whatever123,Invalid email or password
+invalid-email-format,SomePass123,Invalid email format

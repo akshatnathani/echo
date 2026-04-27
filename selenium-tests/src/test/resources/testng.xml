@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="SoundID Flask App Test Suite" verbose="1" parallel="tests" thread-count="3">
+
+    <parameter name="browser" value="chrome"/>
+
+    <test name="Authentication Tests - Data Driven">
+        <classes>
+            <class name="com.echo.tests.RegistrationTest"/>
+            <class name="com.echo.tests.LoginTest"/>
+        </classes>
+    </test>
+
+    <test name="Core Feature Tests - Data Driven">
+        <classes>
+            <class name="com.echo.tests.RecognizeTest"/>
+            <class name="com.echo.tests.LibraryTest"/>
+            <class name="com.echo.tests.HistoryTest"/>
+            <class name="com.echo.tests.AdminUploadTest"/>
+            <class name="com.echo.tests.EndToEndTest"/>
+        </classes>
+    </test>
+
+</suite>

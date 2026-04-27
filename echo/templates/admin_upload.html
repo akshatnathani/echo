@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="admin-upload-container" class="container">
+    <div class="form-box">
+        <h2 id="admin-upload-title">Upload Song to Library</h2>
+        <form id="admin-upload-form" method="POST" action="{{ url_for('admin_upload') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="song_name">Song Name:</label>
+                <input type="text" id="song_name" name="song_name" required>
+            </div>
+            <div class="form-group">
+                <label for="audio_file">Audio File (MP3/WAV):</label>
+                <input type="file" id="audio_file" name="audio_file" accept=".mp3,.wav" required>
+            </div>
+            <button type="submit" id="admin-upload-submit">Upload Song</button>
+        </form>
+        <p id="upload-note">
+            <strong>Note:</strong> Uploaded songs will be fingerprinted and added to the recognition database.
+        </p>
+    </div>
+</div>
+{% endblock %}

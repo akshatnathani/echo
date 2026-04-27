@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div id="recognize-container" class="container">
+    <div class="form-box">
+        <h2 id="recognize-title">Recognize Audio</h2>
+        <form id="recognize-form" method="POST" action="{{ url_for('recognize') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="audio_file">Upload Audio File (MP3/WAV):</label>
+                <input type="file" id="audio_file" name="audio_file" accept=".mp3,.wav" required>
+            </div>
+            <button type="submit" id="recognize-submit">Recognize</button>
+        </form>
+        
+        {% if result %}
+        <div id="recognition-result" class="result-box">
+            {% if result.recognized %}
+                <h3 id="result-title">Song Recognized!</h3>
+                <p id="song-name"><strong>Song:</strong> {{ result.song_name }}</p>
+                <p id="confidence-score"><strong>Confidence:</strong> {{ result.confidence|round(2) }}%</p>
+            {% else %}
+                <h3 id="result-title">Song Not Recognized</h3>
+                <p id="no-match-message">No matching song found in the database.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
