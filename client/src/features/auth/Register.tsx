@@ -81,14 +81,14 @@ export default function Register() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
             </svg>
           </div>
-          <h1 className={`text-4xl font-bold mb-3 ${isDark ? 'text-white' : 'text-black'}`}>SoundID</h1>
+          <h1 className={`text-4xl font-bold mb-3 ${isDark ? 'text-white' : 'text-black'}`}>Echo</h1>
           <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Identify any song instantly</p>
         </div>
 
         {/* Form Card */}
         <div className={`border rounded-2xl p-8 shadow-sm ${isDark ? 'bg-black border-gray-800' : 'bg-white border-gray-200'}`}>
           <h2 id="register-title" className={`text-2xl font-bold mb-2 ${isDark ? 'text-white' : 'text-black'}`}>Create account</h2>
-          <p className={`mb-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Join SoundID and start identifying music</p>
+          <p className={`mb-8 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Join Echo and start identifying music</p>
 
           {error && (
             <div id="flash-message" className={`mb-6 p-4 rounded-xl text-sm ${isDark ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-50 border-red-200 text-red-600'}`}>

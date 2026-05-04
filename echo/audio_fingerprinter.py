@@ -23,7 +23,7 @@ Dependencies:
 - numpy: Numerical computations
 - scipy: Signal processing
 
-Author: SoundID Team
+Author: Echo Team
 Version: 1.0.0
 """
 

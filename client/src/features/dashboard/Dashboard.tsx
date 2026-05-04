@@ -26,17 +26,17 @@ export default function Dashboard() {
         libraryApi.getSongs(),
         recognitionApi.getHistory(),
       ]);
-      
+
       const totalSongs = Array.isArray(songs) ? songs.length : 0;
       const fingerprintedSongs = Array.isArray(songs) ? songs.filter((s: any) => s.fingerprinted).length : 0;
       const totalRecognitions = Array.isArray(history) ? history.length : 0;
-      const recentRecognitions = Array.isArray(history) 
+      const recentRecognitions = Array.isArray(history)
         ? history.filter((h: any) => {
-            const date = new Date(h.timestamp);
-            const weekAgo = new Date();
-            weekAgo.setDate(weekAgo.getDate() - 7);
-            return date >= weekAgo;
-          }).length
+          const date = new Date(h.timestamp);
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return date >= weekAgo;
+        }).length
         : 0;
 
       setStats({
@@ -69,7 +69,7 @@ export default function Dashboard() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
               </div>
-              <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>SoundID</span>
+              <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Echo</span>
             </div>
             <div className="flex items-center gap-4">
               <button
@@ -102,7 +102,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="mb-12">
           <h1 className={`text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-black'}`}>Dashboard</h1>
-          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Overview of your SoundID system</p>
+          <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Overview of your Echo system</p>
         </div>
 
         {loading ? (

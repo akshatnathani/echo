@@ -13,7 +13,7 @@ public class RecognizeTest extends BaseTest {
 
     private RecognizePage recognizePage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         String username = registerWithCredentials(uniqueUsername(), TEST_PASSWORD);
         navigateTo("/login");

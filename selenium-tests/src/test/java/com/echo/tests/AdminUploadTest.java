@@ -13,7 +13,7 @@ public class AdminUploadTest extends BaseTest {
 
     private AdminUploadPage adminUploadPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         // Will be initialized in tests depending on roles
     }

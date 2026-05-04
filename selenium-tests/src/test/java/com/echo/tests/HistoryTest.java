@@ -14,7 +14,7 @@ public class HistoryTest extends BaseTest {
 
     private HistoryPage historyPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         String username = registerWithCredentials(uniqueUsername(), TEST_PASSWORD);
         navigateTo("/login");

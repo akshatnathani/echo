@@ -12,7 +12,7 @@ public class LibraryTest extends BaseTest {
     private LibraryPage libraryPage;
     private String username;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         username = registerWithCredentials(uniqueUsername(), TEST_PASSWORD);
         navigateTo("/login");

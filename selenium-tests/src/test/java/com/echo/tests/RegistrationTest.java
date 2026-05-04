@@ -10,7 +10,7 @@ public class RegistrationTest extends BaseTest {
 
     private RegisterPage registerPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         navigateTo("/register");
         registerPage = new RegisterPage(driver, wait);

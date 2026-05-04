@@ -1,5 +1,5 @@
 """
-SoundID - Audio Recognition Web Application
+Echo - Audio Recognition Web Application
 =============================================
 
 A Flask-based web application for audio fingerprinting and music recognition.
@@ -30,7 +30,7 @@ Dependencies:
 - librosa: Audio processing
 - numpy: Numerical computations
 
-Author: SoundID Team
+Author: Echo Team
 Version: 1.0.0
 """
 

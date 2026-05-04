@@ -18,26 +18,26 @@ export default function AdminUpload() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      
+
       // Client-side file validation
       const validTypes = ['audio/mpeg', 'audio/wav', 'audio/x-wav', 'audio/mp3'];
       const validExtensions = ['.mp3', '.wav'];
       const maxSize = 16 * 1024 * 1024; // 16MB
-      
+
       const fileExtension = '.' + selectedFile.name.split('.').pop()?.toLowerCase();
-      
+
       if (!validExtensions.includes(fileExtension) && !validTypes.includes(selectedFile.type)) {
         setError('Invalid file type. Please upload MP3 or WAV files only.');
         setFile(null);
         return;
       }
-      
+
       if (selectedFile.size > maxSize) {
         setError('File size exceeds 16MB limit. Please upload a smaller file.');
         setFile(null);
         return;
       }
-      
+
       setFile(selectedFile);
       setError('');
       setSuccess('');
@@ -113,7 +113,7 @@ export default function AdminUpload() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                 </svg>
               </div>
-              <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>SoundID</span>
+              <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>Echo</span>
             </div>
             <div className="flex items-center gap-4">
               <button

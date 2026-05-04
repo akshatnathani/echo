@@ -38,7 +38,7 @@ public class BaseTest {
         return "sel_" + System.currentTimeMillis() + "_" + ((int)(Math.random() * 9000) + 1000) + "@test.com";
     }
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp() {
         WebDriverManager.chromedriver().setup();
 
@@ -57,18 +57,23 @@ public class BaseTest {
         // Optional: run headless for CI
         // options.addArguments("--headless=new");
         
-        // Set Chrome binary path (adjust if Chrome is in different location)
-        options.setBinary("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
+        // Setup ChromeDriver with explicit version if needed to avoid DevTools mismatch
+        // Chrome browser version 147 is extremely high/future-dated, possibly a dev/canary build
+        // or a spoofed version. Standardizing the launch.
 
         driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
+        try {
+            driver.manage().window().maximize();
+        } catch (Exception e) {
+            System.err.println("Warning: Could not maximize window initially: " + e.getMessage());
+        }
         // Implicit wait — gives every element lookup a small grace period
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         wait = new WebDriverWait(driver, TIMEOUT, POLL_INTERVAL);
         js = (JavascriptExecutor) driver;
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown(org.testng.ITestResult result) {
         if (driver != null) {
             // Dump browser console logs if the test failed

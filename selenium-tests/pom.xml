@@ -55,6 +55,22 @@
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
+                    <reportsDirectory>${project.basedir}/test-output</reportsDirectory>
+                    <outputDirectory>${project.basedir}/test-output</outputDirectory>
+                    <properties>
+                        <property>
+                            <name>usedefaultlisteners</name>
+                            <value>true</value>
+                        </property>
+                    </properties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <outputDirectory>${project.basedir}/test-output</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

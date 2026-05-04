@@ -1,284 +1,178 @@
 # Echo App — Test Cases
 
+This document describes the test cases for the Echo musical fingerprinter application, covering both the React frontend and Flask backend modules.
+
 ## Module 1: Registration (`/register`)
 
 ### TC-R01: Successful Registration
 - **Precondition:** User not logged in, navigated to `/register`
 - **Steps:**
-  1. Enter full name: "Test User"
-  2. Enter email: "testuser@example.com"
-  3. Enter a valid password: "Test1234"
-  4. Check "I agree to the Terms and Privacy Policy" checkbox
-  5. Click "Create account"
-- **Expected:** User is redirected to `/home`. Token/user stored in localStorage.
+  1. Enter a unique username (e.g., "testuser123")
+  2. Enter a valid password (at least 6 characters)
+  3. Click "Sign Up"
+- **Expected:** Success message displayed ("Registration successful. Please login.") and redirected to `/login`.
 
-### TC-R02: Registration — Empty Fields
-- **Steps:** Click "Create account" without filling any fields
-- **Expected:** Browser native validation blocks submission (required fields).
+### TC-R02: Registration — Duplicate Username
+- **Steps:** Attempt to register with a username that already exists in the database.
+- **Expected:** Error message: "Username already exists".
 
-### TC-R03: Registration — Invalid Email Format
-- **Steps:** Enter name, password "Test1234", check terms, enter email "notanemail"
-- **Expected:** Browser native validation blocks submission (invalid email).
+### TC-R03: Registration — Username Too Short
+- **Steps:** Enter a username with fewer than 3 characters, click submit.
+- **Expected:** Error message: "Username must be at least 3 characters long".
 
 ### TC-R04: Registration — Password Too Short
-- **Steps:** Enter name, email, password "Ab1", check terms, click submit
-- **Expected:** Error message: "Password must be at least 8 characters"
+- **Steps:** Enter a valid username, but a password with fewer than 6 characters, click submit.
+- **Expected:** Error message: "Password must be at least 6 characters long".
 
-### TC-R05: Registration — Password Missing Uppercase
-- **Steps:** Enter password "testtest1", check terms, click submit
-- **Expected:** Error message: "Password must contain at least one uppercase letter"
+### TC-R05: Registration — Empty Fields
+- **Steps:** Click "Sign Up" without filling in username or password.
+- **Expected:** Error message: "Username is required" or "Password is required".
 
-### TC-R06: Registration — Password Missing Lowercase
-- **Steps:** Enter password "TESTTEST1", check terms, click submit
-- **Expected:** Error message: "Password must contain at least one lowercase letter"
-
-### TC-R07: Registration — Password Missing Number
-- **Steps:** Enter password "Testtest", check terms, click submit
-- **Expected:** Error message: "Password must contain at least one number"
-
-### TC-R08: Registration — Terms Not Agreed
-- **Steps:** Fill all fields validly but do NOT check terms checkbox, click submit
-- **Expected:** Error message: "Please agree to the Terms of Service and Privacy Policy"
-
-### TC-R09: Registration — Duplicate Email
-- **Steps:** Register with an already-registered email
-- **Expected:** Error message from server (e.g., "Email already exists")
-
-### TC-R10: Registration — Password Strength Indicators
-- **Steps:** Type password character by character
-- **Expected:**
-  - "8+ chars" indicator turns green when length >= 8
-  - "Uppercase" indicator turns green when an uppercase letter is typed
-  - "Lowercase" indicator turns green when a lowercase letter is typed
-  - "Number" indicator turns green when a digit is typed
-
-### TC-R11: Registration — Show/Hide Password Toggle
-- **Steps:** Enter password, click the eye icon toggle
-- **Expected:** Password field toggles between `type="password"` and `type="text"`
-
-### TC-R12: Registration — Navigate to Login
-- **Steps:** Click "Sign in" link at the bottom
-- **Expected:** Navigated to `/login`
-
-### TC-R13: Registration — Google OAuth Button Rendered
-- **Steps:** Load the register page
-- **Expected:** Google "Sign up with Google" button is visible in the form
+### TC-R06: Navigate to Login
+- **Steps:** Click the "Login" link at the bottom of the registration form.
+- **Expected:** User is navigated to the `/login` page.
 
 ---
 
 ## Module 2: Login (`/login`)
 
-### TC-L01: Successful Login
-- **Precondition:** User already registered with email/password
+### TC-L01: Successful Regular User Login
+- **Precondition:** User already registered.
 - **Steps:**
-  1. Enter registered email
-  2. Enter correct password
-  3. Click "Sign in"
-- **Expected:** User is redirected to `/home`. Token/user stored in localStorage.
+  1. Enter registered username.
+  2. Enter correct password.
+  3. Click "Login".
+- **Expected:** User is redirected to `/recognize`.
 
-### TC-L02: Login — Empty Fields
-- **Steps:** Click "Sign in" without entering email or password
-- **Expected:** Browser native validation blocks submission.
+### TC-L02: Successful Admin Login
+- **Steps:** Enter "admin" and the admin password (admin123), click login.
+- **Expected:** Redirected to `/recognize`.
 
-### TC-L03: Login — Invalid Email Format
-- **Steps:** Enter "notanemail" in email, any password, click submit
-- **Expected:** Browser native validation blocks submission.
+### TC-L03: Login — Invalid Credentials
+- **Steps:** Enter non-existent username or incorrect password, click submit.
+- **Expected:** Error message: "Invalid username or password".
 
-### TC-L04: Login — Wrong Password
-- **Steps:** Enter valid registered email, enter wrong password, click submit
-- **Expected:** Error message displayed (e.g., "Invalid credentials" or "Login failed").
+### TC-L04: Login — Empty Fields
+- **Steps:** Click "Login" without entering username or password.
+- **Expected:** Error message: "Username is required" or "Password is required".
 
-### TC-L05: Login — Non-existent Email
-- **Steps:** Enter an unregistered email, any password, click submit
-- **Expected:** Error message displayed.
-
-### TC-L06: Login — Show/Hide Password Toggle
-- **Steps:** Enter password, click eye icon
-- **Expected:** Password field toggles between `type="password"` and `type="text"`
-
-### TC-L07: Login — Navigate to Register
-- **Steps:** Click "Sign up for free" link at the bottom
-- **Expected:** Navigated to `/register`
-
-### TC-L08: Login — Google OAuth Button Rendered
-- **Steps:** Load the login page
-- **Expected:** Google "Continue with Google" button is visible.
-
-### TC-L09: Login — Loading State
-- **Steps:** Submit valid credentials
-- **Expected:** Button text changes to "Signing in..." and button is disabled during request.
-
-### TC-L10: Login — Protected Route Redirect
-- **Precondition:** Not logged in
-- **Steps:** Navigate directly to `/home`
-- **Expected:** Redirected to `/login` (or `/register`)
+### TC-L05: Protected Route Redirect
+- **Precondition:** Not logged in.
+- **Steps:** Attempt to navigate directly to `/recognize`, `/history`, or `/library`.
+- **Expected:** User is redirected to the `/login` page.
 
 ---
 
-## Module 3: Discover / Listen from Mic (`/home`)
+## Module 3: Song Recognition (`/recognize`)
 
-### TC-D01: Page Load — UI Elements Present
-- **Precondition:** Logged in, navigated to `/home`
-- **Expected:**
-  - Navbar is visible with "Discover" as active page
-  - Hero text: "Identify the music around you."
-  - Circular mic button with "Tap to Listen" label
-  - Trending echoes section is visible
+### TC-REC01: Page Load — UI Elements Present
+- **Precondition:** Logged in.
+- **Expected:** Page shows file upload area, "Upload for recognition" label, and "Recognize" button.
 
-### TC-D02: Start Listening — Mic Permission Granted
-- **Steps:** Click the large circular mic button
-- **Expected:**
-  - Button changes state: animated sound bars appear, text changes to "Listening..."
-  - Animated pulsing rings appear around the button
-  - After ~5 seconds, recording stops automatically
+### TC-REC02: Successful Recognition (MP3)
+- **Steps:** Upload a valid MP3 file that exists in the system fingerprints, click "Recognize".
+- **Expected:** Result card displays the song name, artist, and match confidence.
 
-### TC-D03: Start Listening — Mic Permission Denied
-- **Steps:** Click mic button, deny microphone permission in browser prompt
-- **Expected:** Error message: "Microphone access denied. Please allow mic access and try again."
+### TC-REC03: Successful Recognition (WAV)
+- **Steps:** Upload a valid WAV file, click "Recognize".
+- **Expected:** Recognition result is displayed.
 
-### TC-D04: Stop Listening Early
-- **Steps:** Click mic button (start listening), then click again before 5 seconds
-- **Expected:** Listening stops immediately, no result or error shown.
+### TC-REC04: Song Not Found
+- **Steps:** Upload an audio file that is NOT in the database.
+- **Expected:** Page displays "Song not found" or "No match found" message.
 
-### TC-D05: Successful Song Identification
-- **Steps:** Click mic button, allow mic, wait 5 seconds
-- **Expected:**
-  - Identified track card appears with: song name, artist, album, genre, BPM
-  - Green toast banner: "Added to your Echoed playlist!" with "View →" link
-  - Song is saved to localStorage (`echo_local_playlist`)
+### TC-REC05: Recognition — Invalid File type
+- **Steps:** Attempt to upload a non-audio file (e.g., .txt, .jpg).
+- **Expected:** File selector or validation blocks the upload, or an error is displayed.
 
-### TC-D06: Song Saved to localStorage
-- **Precondition:** Song successfully identified
-- **Steps:** Open browser DevTools > Application > localStorage > `echo_local_playlist`
-- **Expected:** JSON array contains the identified song with `local_` prefixed ID.
-
-### TC-D07: View Playlist Link in Toast
-- **Steps:** After identification, click "View →" link in green toast
-- **Expected:** Navigated to `/playlists`
-
-### TC-D08: Navbar Navigation — Playlists
-- **Steps:** Click "Playlists" in the navbar
-- **Expected:** Navigated to `/playlists`
-
-### TC-D09: Error State Display
-- **Steps:** Trigger any identification error (e.g., server down)
-- **Expected:** Red error banner appears below the mic button with error message.
+### TC-REC06: Recognize — Empty Submission
+- **Steps:** Click "Recognize" without selecting a file.
+- **Expected:** "Recognize" button is disabled.
 
 ---
 
-## Module 4: Echoed Playlist (`/playlists`)
+## Module 4: History (`/history`)
 
-### TC-P01: Page Load — Playlist with Songs
-- **Precondition:** At least one song identified previously (exists in localStorage)
-- **Expected:**
-  - Navbar visible with "Playlists" active
-  - Playlist header: "Echoed" title, song count, estimated duration
-  - Song table with columns: #, Title (with artist), Album, Date, Remove button
-  - "Discover Your Vibe" AI button visible
+### TC-H01: Load History
+- **Steps:** Navigate to `/history`.
+- **Expected:** History table displays columns: Song, Confidence, Status, Date.
 
-### TC-P02: Page Load — Empty Playlist
-- **Precondition:** No songs identified, localStorage empty
-- **Expected:** "No echoes yet" empty state with guidance text.
-
-### TC-P03: Song Row Display
-- **Steps:** View a song in the list
-- **Expected:**
-  - Row shows index number, song title, artist, album (or "—"), date formatted as "Mon DD, YYYY"
-  - Remove button (trash icon) appears on hover
-
-### TC-P04: Remove Song from Playlist
-- **Steps:** Hover over a song row, click the trash icon
-- **Expected:** Song is removed from the list. If local, removed from localStorage. If server, DELETE API called.
-
-### TC-P05: Discover Your Vibe — Button Click
-- **Steps:** Click "Discover Your Vibe" button
-- **Expected:**
-  - Button shows loading spinner with "Analyzing your sonic identity..."
-  - After API response, vibe card replaces the button
-
-### TC-P06: Vibe Card Display
-- **Precondition:** Vibe analysis completed successfully
-- **Expected:**
-  - Vibe name with emoji displayed
-  - Listening persona badge shown
-  - Description paragraph
-  - Sonic identity quote (italic, left-bordered)
-  - Mood keyword tags
-  - Mini stats row: top genre, energy level, songs analyzed count
-  - Regenerate button (refresh icon)
-
-### TC-P07: Regenerate Vibe
-- **Steps:** Click the refresh icon on the vibe card
-- **Expected:** Vibe analysis runs again, card updates with new AI-generated data.
-
-### TC-P08: Vibe Error — No Songs
-- **Steps:** Remove all songs, then somehow trigger vibe (edge case)
-- **Expected:** Error suppressed (hidden when message includes "No songs").
-
-### TC-P09: Vibe Error — API Failure
-- **Steps:** Trigger vibe when server/Gemini is down
-- **Expected:** Red error text appears below the vibe button.
-
-### TC-P10: Song Count and Duration Update
-- **Steps:** Add/remove songs
-- **Expected:** Song count and "~X min" update dynamically.
+### TC-H02: History Empty State
+- **Precondition:** New user with no recognition history.
+- **Steps:** Navigate to `/history`.
+- **Expected:** Message displayed: "No recognition history yet".
 
 ---
 
-## Module 5: End-to-End Flow (Mic → Playlist)
+## Module 5: Library (`/library`)
 
-### TC-E2E01: Full Flow — Register → Identify → Playlist
-1. Navigate to `/register`
-2. Register new account
-3. Redirected to `/home`
-4. Click mic button, wait for identification
-5. Verify green toast "Added to your Echoed playlist!"
-6. Click "View →" or navigate to `/playlists`
-7. Verify identified song appears in playlist table
-8. Click "Discover Your Vibe"
-9. Verify vibe card appears with AI analysis
+### TC-LIB01: Load Library
+- **Steps:** Navigate to `/library`.
+- **Expected:** Library grid/list displays available songs.
 
-### TC-E2E02: Full Flow — Login → Identify → Playlist
-1. Navigate to `/login`
-2. Login with existing credentials
-3. Redirected to `/home`
-4. Click mic button, identify a song
-5. Navigate to `/playlists`
-6. Verify song is in the list
+### TC-LIB02: Search Functionality
+- **Steps:** Type a partial song name in the search bar.
+- **Expected:** List filters to show only matching songs.
 
-### TC-E2E03: Multiple Songs Workflow
-1. Login
-2. Identify Song A on `/home`
-3. Identify Song B on `/home`
-4. Go to `/playlists`
-5. Verify both songs appear in the table (Song B first if sorted by date desc)
+### TC-LIB03: Search — No Results
+- **Steps:** Search for a string that doesn't match any song name.
+- **Expected:** Message displayed: "No songs found".
 
-### TC-E2E04: Remove Song and Re-check
-1. Go to `/playlists` with songs
-2. Remove a song
-3. Refresh page
-4. Verify song is no longer in the list
+### TC-LIB04: Admin Upload Button Visibility (Admin)
+- **Precondition:** Logged in as "admin".
+- **Steps:** Navigate to `/library`.
+- **Expected:** "Upload Song" button is visible.
+
+### TC-LIB05: Admin Upload Button Visibility (Regular User)
+- **Precondition:** Logged in as a regular user.
+- **Steps:** Navigate to `/library`.
+- **Expected:** "Upload Song" button is NOT visible.
 
 ---
 
-## Module 6: Navigation & Auth Guards
+## Module 6: Admin Actions (`/admin/upload`)
 
-### TC-N01: Unauthenticated Access to Protected Route
-- **Steps:** Clear localStorage, navigate to `/home`
-- **Expected:** Redirected to login/register page
+### TC-A01: Access Admin Upload Page (Admin)
+- **Precondition:** Logged in as admin.
+- **Steps:** Navigate to `/admin/upload`.
+- **Expected:** Page loads successfully with song upload form.
 
-### TC-N02: Authenticated Access to Public Route
-- **Steps:** While logged in, navigate to `/login`
-- **Expected:** Redirected to `/home` (PublicRoute guard)
+### TC-A02: Access Admin Upload Page (Regular User)
+- **Precondition:** Logged in as regular user.
+- **Steps:** Navigate to `/admin/upload`.
+- **Expected:** "Access Denied" error message displayed.
 
-### TC-N03: Navbar Links Work
-- **Steps:** Click each navbar link (Discover, Playlists)
-- **Expected:** Each navigates to the correct page
+### TC-A03: Successful Song Upload & Fingerprinting
+- **Precondition:** Logged in as admin on `/admin/upload`.
+- **Steps:** Enter song name, artist name, select MP3 file, click "Upload and Fingerprint".
+- **Expected:** Success message shown. Song is added to database and fingerprint database updated.
 
-### TC-N04: Root URL Redirect
-- **Steps:** Navigate to `/`
-- **Expected:** Redirected to `/register`
+### TC-A04: Upload Duplicate Song
+- **Steps:** Attempt to upload a song that already exists in the library.
+- **Expected:** Error message: "Song already exists in the database".
 
 ---
 
-**Total Test Cases: 44**
+## Module 7: End-to-End Workflow
+
+### TC-E2E01: Register to Recognition Flow
+1. **Register** a new user.
+2. **Login** with the new user credentials.
+3. Navigate to **Recognize** page.
+4. **Upload** an audio sample.
+5. Check **History** to verify the recognition attempt is logged.
+6. Check **Library** for available songs.
+7. **Logout**.
+
+### TC-E2E02: Admin Upload to User Recognition
+1. **Login as Admin**.
+2. **Upload** a new song "Unique Song" via `/admin/upload`.
+3. **Logout**.
+4. **Login as Regular User**.
+5. Use **Recognize** to identify "Unique Song".
+6. Verify result shows "Unique Song" with high confidence.
+
+---
+
+**Total Test Cases: 31**
+

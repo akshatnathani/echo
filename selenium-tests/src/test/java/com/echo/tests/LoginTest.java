@@ -10,7 +10,7 @@ public class LoginTest extends BaseTest {
 
     private LoginPage loginPage;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void initPage() {
         navigateTo("/login");
         loginPage = new LoginPage(driver, wait);
